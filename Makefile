@@ -23,19 +23,19 @@ endef
 %.o : %.cpp
 	$(CXX) -c $(CPPFLAGS) $< -o $@
 
-minimal-d3d-sample: D3D11AppView.o
+minimal-d3d-sample.exe: D3D11AppView.o
 	$(CXX) $(CPPFLAGS) $< -ld3d11 -lkernel32 -lshell32 -luser32 $(WINRT_BASE_LIB_FLAGS) -o $@
 
-simple-winapp: simple-winapp.o
+simple-winapp.exe: simple-winapp.o
 	$(CXX) $(CPPFLAGS) $< -luser32 -lshell32 $(WINRT_BASE_LIB_FLAGS) -o $@
 
 clean: 
 	rm *.o minimal-d3d-sample simple-winapp
 
-test-simple: simple-winapp
-	WINEDEBUG=-all wine ./simple-winapp
+test-simple: simple-winapp.exe
+	WINEDEBUG=-all wine ./simple-winapp.exe
 
-test-d3d11: minimal-d3d-sample
-	WINEDEBUG=-all wine ./minimal-d3d-sample
+test-d3d11: minimal-d3d-sample.exe
+	WINEDEBUG=-all wine ./minimal-d3d-sample.exe
 
-all: minimal-d3d-sample
+all: minimal-d3d-sample.exe

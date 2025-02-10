@@ -2,8 +2,120 @@
     D3D11AppView.cpp
 */
 
-#include "pch.h"
-#include "D3D11AppView.h"
+#pragma comment(lib, "windowsapp")
+
+#pragma warning( disable : 4996)
+
+//#include <unknwn.h>
+#include <winrt/base.h>
+#include <winrt/Windows.Foundation.h>
+#include <winrt/Windows.ApplicationModel.Activation.h>
+#include <winrt/Windows.ApplicationModel.Core.h>
+#include <winrt/Windows.Devices.Input.h>
+#include <winrt/Windows.Graphics.Display.h>
+#include <winrt/Windows.UI.Core.h>
+#include <winrt/Windows.UI.Composition.h>
+#include <winrt/Windows.UI.Input.h>
+#include <winrt/wrl/client.h>
+#include <winrt/wrl/implements.h>
+
+#include <exception>
+#include <d3d11_3.h>
+#include <directxmath.h>
+#include <dxgi1_4.h>
+#include <memory>
+
+//using namespace ABI;
+using namespace winrt;
+using namespace Microsoft::WRL;
+using namespace Windows;
+using namespace Windows::Foundation;
+using namespace Windows::Devices::Input;
+using namespace Windows::Graphics::Display;
+using namespace Windows::ApplicationModel::Activation;
+using namespace Windows::ApplicationModel::Core;
+using namespace Windows::Foundation::Numerics;
+using namespace Windows::ApplicationModel;
+using namespace Windows::ApplicationModel::Core;
+using namespace Windows::ApplicationModel::Activation;
+using namespace Windows::Graphics::Display;
+using namespace Windows::System;
+using namespace Windows::UI::Core;
+using namespace Windows::UI::Input;
+using namespace DirectX;
+
+
+/**
+*/
+struct AppView : implements<AppView, IFrameworkView>
+{
+
+public:
+
+    // IFrameworkView Methods.
+    virtual void Initialize(const CoreApplicationView& applicationView);
+    virtual void SetWindow(const CoreWindow& window);
+    virtual void Load(const hstring& entryPoint);
+    virtual void Run();
+    virtual void Uninitialize();
+
+private:
+
+    // Event handlers.
+    void OnActivated(const CoreApplicationView& applicationView, const IActivatedEventArgs& args);
+    void OnWindowSizeChanged(const CoreWindow& sender, const WindowSizeChangedEventArgs& args);
+    void OnVisibilityChanged(const CoreWindow& sender, const VisibilityChangedEventArgs& args);
+    void OnWindowClosed(const CoreWindow& sender, const CoreWindowEventArgs& args);
+    void OnDpiChanged(const DisplayInformation& sender, const IInspectable& args);
+    void OnOrientationChanged(const DisplayInformation& sender, const IInspectable& args);
+    void OnDisplayContentsInvalidated(const DisplayInformation& sender, const IInspectable& args);
+    void OnPointerPressed(const CoreWindow& sender, const PointerEventArgs& args);
+    void OnPointerReleased(const CoreWindow& sender, const PointerEventArgs& args);
+    void OnPointerWheelChanged(const CoreWindow& sender, const PointerEventArgs& args);
+    void OnMouseMoved(const MouseDevice& sender, const MouseEventArgs& args);
+
+    // Internal methods.
+    void HandleDeviceLost();
+    void CreateDeviceResources();
+    void CreateWindowSizeDependentResources();
+    DXGI_MODE_ROTATION ComputeDisplayRotation();
+    float ConvertDipsToPixels(float dips);
+    void UpdatePointerButtons(const PointerEventArgs& args);
+
+    // Window state.
+    bool m_windowClosed = false;
+    bool m_windowVisible = true;
+
+    // Cached window and display properties.
+    CoreWindow m_window = nullptr;
+    float m_dpi = -1.0f;
+
+    // Direct3D objects.
+    com_ptr<ID3D11Device3> m_device;
+    com_ptr<ID3D11DeviceContext3> m_context;
+    com_ptr<IDXGISwapChain3> m_swapChain;
+
+    // Direct3D rendering objects. Required for 3D.
+    com_ptr<ID3D11RenderTargetView1> m_renderTargetView;
+    com_ptr<ID3D11DepthStencilView> m_depthStencilView;
+    D3D11_VIEWPORT m_viewport = D3D11_VIEWPORT();
+
+    // Cached device properties.
+    D3D_FEATURE_LEVEL m_featureLevel = D3D_FEATURE_LEVEL_9_1;
+    Windows::Foundation::Size m_renderTargetSize = Windows::Foundation::Size();
+    Windows::Foundation::Size m_outputSize = Windows::Foundation::Size();
+    Windows::Foundation::Size m_logicalSize = Windows::Foundation::Size();
+    Windows::Graphics::Display::DisplayOrientations	m_nativeOrientation = Windows::Graphics::Display::DisplayOrientations::None;
+    Windows::Graphics::Display::DisplayOrientations	m_currentOrientation = Windows::Graphics::Display::DisplayOrientations::None;
+
+    // Transforms used for display orientation.
+    DirectX::XMFLOAT4X4	m_orientationTransform;
+
+    // Previous pointer position. Used to compute deltas.
+    CoreCursor m_defaultCursor = nullptr;
+    CoreCursor m_cursor = nullptr;
+
+};
 
 using namespace winrt;
 
@@ -123,10 +235,10 @@ void AppView::Run()
             // Discard the contents of the render target.
             // This is a valid operation only when the existing contents will be entirely
             // overwritten. If dirty or scroll rects are used, this call should be removed.
-            m_context->DiscardView1(m_renderTargetView.Get(), nullptr, 0);
+            m_context->DiscardView1(m_renderTargetView.get(), nullptr, 0);
 
             // Discard the contents of the depth stencil.
-            m_context->DiscardView1(m_depthStencilView.Get(), nullptr, 0);
+            m_context->DiscardView1(m_depthStencilView.get(), nullptr, 0);
 
             // If the device was removed either by a disconnection or a driver upgrade, we 
             // must recreate all device resources.
@@ -550,7 +662,7 @@ void AppView::CreateWindowSizeDependentResources()
     // Create a render target view of the swap chain back buffer.
     com_ptr<ID3D11Texture2D1> backBuffer;
     ChkOk(m_swapChain->GetBuffer(0, IID_ID3D11Texture2D1, backBuffer.put_void()));
-    ChkOk(m_device->CreateRenderTargetView1(backBuffer.Get(), nullptr, m_renderTargetView.put()));
+    ChkOk(m_device->CreateRenderTargetView1(backBuffer.get(), nullptr, m_renderTargetView.put()));
 
     // Create a depth stencil view for use with 3D rendering if needed.
     D3D11_TEXTURE2D_DESC1 depthStencilDesc(
@@ -627,7 +739,7 @@ void AppView::UpdatePointerButtons(const PointerEventArgs& args)
 {
     auto device = args.CurrentPoint().PointerDevice();
 
-    if (device.PointerDeviceType() == PointerDeviceType::Mouse)
+    if (device.PointerDeviceType() == PointerDeviceType_Mouse)
     {
         auto properties = args.CurrentPoint().Properties();
         // TODO: Do something with properties

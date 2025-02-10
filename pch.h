@@ -4,17 +4,18 @@
 
 #pragma warning( disable : 4996)
 
-#include <unknwn.h>
-#include "winrt/Windows.ApplicationModel.Activation.h"
-#include "winrt/Windows.ApplicationModel.Core.h"
-#include "winrt/Windows.Devices.Input.h"
-#include "winrt/Windows.Graphics.Display.h"
-#include "winrt/Windows.Foundation.h"
-#include "winrt/Windows.UI.Core.h"
-#include "winrt/Windows.UI.Composition.h"
-#include "winrt/Windows.UI.Input.h"
-#include "winrt/wrl/client.h"
-#include "winrt/wrl/implements.h"
+//#include <unknwn.h>
+#include <winrt/base.h>
+#include <winrt/Windows.Foundation.h>
+#include <winrt/Windows.ApplicationModel.Activation.h>
+#include <winrt/Windows.ApplicationModel.Core.h>
+#include <winrt/Windows.Devices.Input.h>
+#include <winrt/Windows.Graphics.Display.h>
+#include <winrt/Windows.UI.Core.h>
+#include <winrt/Windows.UI.Composition.h>
+#include <winrt/Windows.UI.Input.h>
+#include <winrt/wrl/client.h>
+#include <winrt/wrl/implements.h>
 
 #include <exception>
 #include <d3d11_3.h>

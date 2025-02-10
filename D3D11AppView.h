@@ -6,16 +6,25 @@
 
 #include "pch.h"
 
+using namespace ABI;
 using namespace winrt;
+using namespace Microsoft::WRL;
 using namespace Windows;
 using namespace Windows::Devices::Input;
 using namespace Windows::Graphics::Display;
 using namespace Windows::ApplicationModel::Activation;
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Foundation::Numerics;
-using namespace Windows::UI;
+using namespace Windows::ApplicationModel;
+using namespace Windows::ApplicationModel::Core;
+using namespace Windows::ApplicationModel::Activation;
+using namespace Windows::Foundation;
+using namespace Windows::Graphics::Display;
+using namespace Windows::System;
 using namespace Windows::UI::Core;
-using namespace Windows::UI::Composition;
+using namespace Windows::UI::Input;
+using namespace DirectX;
+
 
 /**
 */
@@ -63,13 +72,13 @@ private:
     float m_dpi = -1.0f;
 
     // Direct3D objects.
-    com_ptr<ID3D11Device3> m_device;
-    com_ptr<ID3D11DeviceContext3> m_context;
-    com_ptr<IDXGISwapChain3> m_swapChain;
+    ComPtr<ID3D11Device3> m_device;
+    ComPtr<ID3D11DeviceContext3> m_context;
+    ComPtr<IDXGISwapChain3> m_swapChain;
 
     // Direct3D rendering objects. Required for 3D.
-    com_ptr<ID3D11RenderTargetView1> m_renderTargetView;
-    com_ptr<ID3D11DepthStencilView> m_depthStencilView;
+    ComPtr<ID3D11RenderTargetView1> m_renderTargetView;
+    ComPtr<ID3D11DepthStencilView> m_depthStencilView;
     D3D11_VIEWPORT m_viewport = D3D11_VIEWPORT();
 
     // Cached device properties.

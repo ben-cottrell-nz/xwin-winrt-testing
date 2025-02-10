@@ -5,15 +5,7 @@
 #include "pch.h"
 #include "D3D11AppView.h"
 
-using namespace Windows::ApplicationModel;
-using namespace Windows::ApplicationModel::Core;
-using namespace Windows::ApplicationModel::Activation;
-using namespace Windows::Foundation;
-using namespace Windows::Graphics::Display;
-using namespace Windows::System;
-using namespace Windows::UI::Core;
-using namespace Windows::UI::Input;
-using namespace DirectX;
+using namespace winrt;
 
 /**
 */
@@ -131,10 +123,10 @@ void AppView::Run()
             // Discard the contents of the render target.
             // This is a valid operation only when the existing contents will be entirely
             // overwritten. If dirty or scroll rects are used, this call should be removed.
-            m_context->DiscardView1(m_renderTargetView.get(), nullptr, 0);
+            m_context->DiscardView1(m_renderTargetView.Get(), nullptr, 0);
 
             // Discard the contents of the depth stencil.
-            m_context->DiscardView1(m_depthStencilView.get(), nullptr, 0);
+            m_context->DiscardView1(m_depthStencilView.Get(), nullptr, 0);
 
             // If the device was removed either by a disconnection or a driver upgrade, we 
             // must recreate all device resources.
@@ -558,7 +550,7 @@ void AppView::CreateWindowSizeDependentResources()
     // Create a render target view of the swap chain back buffer.
     com_ptr<ID3D11Texture2D1> backBuffer;
     ChkOk(m_swapChain->GetBuffer(0, IID_ID3D11Texture2D1, backBuffer.put_void()));
-    ChkOk(m_device->CreateRenderTargetView1(backBuffer.get(), nullptr, m_renderTargetView.put()));
+    ChkOk(m_device->CreateRenderTargetView1(backBuffer.Get(), nullptr, m_renderTargetView.put()));
 
     // Create a depth stencil view for use with 3D rendering if needed.
     D3D11_TEXTURE2D_DESC1 depthStencilDesc(

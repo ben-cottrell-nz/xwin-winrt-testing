@@ -1,0 +1,36 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-c",
+      "-std=c++20",
+      "-target",
+      "i686-pc-windows-msvc",
+      "-DUNICODE",
+      "-D_UNICODE",
+      "-D_WINDOWS",
+      "-Wno-everything",
+      "-ferror-limit=300",
+      "-I",
+      "/home/ben/Downloads/.xwin-cache/splat/sdk/include",
+      "-I",
+      "/home/ben/Downloads/.xwin-cache/splat/sdk/include/shared",
+      "-I",
+      "/home/ben/Downloads/.xwin-cache/splat/sdk/include/um",
+      "-I",
+      "/home/ben/Downloads/.xwin-cache/splat/sdk/include/ucrt",
+      "-I",
+      "/home/ben/Downloads/.xwin-cache/splat/sdk/include/winrt",
+      "-I",
+      "/home/ben/Downloads/.xwin-cache/splat/crt/include",
+      "-I",
+      "/home/ben/Downloads/.xwin-cache/splat/crt/include",
+      "-o",
+      "D3D11AppView.o",
+      "D3D11AppView.cpp"
+    ],
+    "directory": "/home/ben/Documents/learning-stuff/modern-cpp/winrt-test-cases/minimal-d3d11-sample",
+    "file": "/home/ben/Documents/learning-stuff/modern-cpp/winrt-test-cases/minimal-d3d11-sample/D3D11AppView.cpp",
+    "output": "/home/ben/Documents/learning-stuff/modern-cpp/winrt-test-cases/minimal-d3d11-sample/D3D11AppView.o"
+  }
+]

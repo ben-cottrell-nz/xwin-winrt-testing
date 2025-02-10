@@ -13,6 +13,8 @@
 #include "winrt/Windows.UI.Core.h"
 #include "winrt/Windows.UI.Composition.h"
 #include "winrt/Windows.UI.Input.h"
+#include "winrt/wrl/client.h"
+#include "winrt/wrl/implements.h"
 
 #include <exception>
 #include <d3d11_3.h>
